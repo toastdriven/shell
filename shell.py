@@ -29,7 +29,7 @@ import subprocess
 
 __author__ = 'Daniel Lindsley'
 __license__ = 'New BSD'
-__version__ = (1, 0, 0)
+__version__ = (1, 0, 1)
 
 
 class ShellException(Exception):

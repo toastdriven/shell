@@ -6,7 +6,7 @@ except ImportError:
 
 setup(
     name="shell",
-    version="1.0.0",
+    version="1.0.1",
     description="A better way to run shell commands in Python.",
     author='Daniel Lindsley',
     author_email='daniel@toastdriven.com',
