@@ -7,8 +7,6 @@ shell
 Built because every time I go to use `subprocess`_, I spend more time in the
 docs & futzing around than actually implementing what I'm trying to get done.
 
-Dare I say: "shell commands for humans"? *gasp*
-
 .. _`subprocess`: http://docs.python.org/2.7/library/subprocess.html
 
 Full docs are at https://shell.readthedocs.org/en/latest/.
