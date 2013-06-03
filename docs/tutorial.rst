@@ -95,7 +95,7 @@ read the output & errors like so::
     []
 
     # The class-based variant.
-    >>> from shall import Shell
+    >>> from shell import Shell
     >>> sh = Shell()
     >>> sh.run('ls /tmp')
     >>> sh.output()
