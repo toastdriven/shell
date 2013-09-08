@@ -56,7 +56,7 @@ the easy functional version::
 
 Or the class-based & extensible version::
 
-    >>> from shall import Shell
+    >>> from shell import Shell
 
 
 Your First Command
@@ -69,7 +69,7 @@ terminal off to ``shell``::
     >>> shell('touch hello_world.txt')
 
     # The class-based variant.
-    >>> from shall import Shell
+    >>> from shell import Shell
     >>> sh = Shell()
     >>> sh.run('touch hello_world.txt')
 
@@ -131,7 +131,7 @@ If the command is interactive, you can send it input as well.::
     ]
 
     # The class-based variant.
-    >>> from shall import Shell
+    >>> from shell import Shell
     >>> sh = Shell(has_input=True)
     >>> sh.run('cat -u')
     >>> sh.write('Hello, world!')
@@ -159,7 +159,7 @@ You can also chain calls together, if that suits you.::
     ]
 
     # The class-based variant.
-    >>> from shall import Shell
+    >>> from shell import Shell
     >>> Shell(has_input=True).run('cat -u').write('Hello, world!').output()
     [
         'Hello, world!'
@@ -179,7 +179,7 @@ it like so.::
     0
 
     # The class-based variant.
-    >>> from shall import Shell
+    >>> from shell import Shell
     >>> sh = Shell(record_output=False, record_errors=False)
     >>> sh.run('run_intensive_command -v')
     >>> sh.code
