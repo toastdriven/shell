@@ -140,7 +140,7 @@ class Shell(object):
 
             >>> from shell import Shell
             >>> sh = Shell()
-            >>> sh.run('ls- alh')
+            >>> sh.run('ls -alh')
 
         """
         self.last_command = command
