@@ -146,4 +146,10 @@ class ShellTestCase(unittest.TestCase):
         sh = Shell(die=True)
         with self.assertRaises(CommandError):
             sh.run('ls /maybe/this/exists/on/windows/or/something/idk')
+        try:
+            no_die = shell('ls /other/fake/stuff/for/sure')  # get the stderr
+            sh.run('ls /other/fake/stuff/for/sure')
+        except CommandError, e:
+            self.assertEqual(e.code, 1)
+            self.assertEqual(e.stderr, no_die.errors()[0] + os.linesep)
 

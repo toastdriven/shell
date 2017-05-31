@@ -44,7 +44,11 @@ class MissingCommandException(ShellException):
 
 class CommandError(ShellException):
     """Thrown when a command fails."""
-    pass
+    def __init__(self, message, code, stderr):
+        self.message = message
+        self.code = code
+        self.stderr = stderr
+        super(CommandError, self).__init__(message)
 
 
 class Shell(object):
@@ -132,8 +136,10 @@ class Shell(object):
             self.code = self._popen.returncode
 
         if self.die and self.code != 0:
-            raise CommandError('Command exited with code {}'.format(self.code))
-
+            raise CommandError(
+                message='Command exited with code {}'.format(self.code),
+                code=self.code,
+                stderr=stderr)
 
     def run(self, command):
         """
