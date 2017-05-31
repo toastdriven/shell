@@ -44,12 +44,16 @@ class MissingCommandException(ShellException):
 
 class CommandError(ShellException):
     """Thrown when a command fails."""
-    error_code = 1
+    pass
 
 
 class Shell(object):
     """
     Handles executing commands & recording output.
+
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
 
     Optionally accepts a ``has_input`` parameter, which should be a boolean.
     If set to ``True``, the command will wait to execute until you call the
@@ -67,8 +71,9 @@ class Shell(object):
     If set to ``True``, only non-empty lines from ``Shell.output`` or
     ``Shell.errors`` will be returned. (Default: ``True``)
     """
-    def __init__(self, has_input=False, record_output=True, record_errors=True,
-                 strip_empty=True):
+    def __init__(self, die=False, has_input=False, record_output=True,
+                 record_errors=True, strip_empty=True):
+        self.die = die
         self.has_input = has_input
         self.record_output = record_output
         self.record_errors = record_errors
@@ -125,6 +130,10 @@ class Shell(object):
 
         if self._popen.returncode is not None:
             self.code = self._popen.returncode
+
+        if self.die and self.code != 0:
+            raise CommandError('Command exited with code {}'.format(self.code))
+
 
     def run(self, command):
         """
@@ -276,14 +285,18 @@ class Shell(object):
         return lines
 
 
-def shell(command, has_input=False, record_output=True, record_errors=True,
-          strip_empty=True):
+def shell(command, die=False, has_input=False, record_output=True,
+          record_errors=True, strip_empty=True):
     """
     A convenient shortcut for running commands.
 
     Requires a ``command`` parameter should be either a string command
     (easier) or an array of arguments to send as the command (if you know
     what you're doing).
+
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
 
     Optionally accepts a ``has_input`` parameter, which should be a boolean.
     If set to ``True``, the command will wait to execute until you call the
@@ -312,6 +325,7 @@ def shell(command, has_input=False, record_output=True, record_errors=True,
 
     """
     sh = Shell(
+        die=die,
         has_input=has_input,
         record_output=record_output,
         record_errors=record_errors,

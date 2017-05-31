@@ -8,7 +8,7 @@ try:
 except ImportError:
     import unittest
 
-from shell import Shell, shell
+from shell import CommandError, Shell, shell
 
 
 class ShellTestCase(unittest.TestCase):
@@ -141,3 +141,9 @@ class ShellTestCase(unittest.TestCase):
 
         output = shell('cat -u', has_input=True).write('Hello, world!').output()
         self.assertEqual(output, ['Hello, world!'])
+
+    def test_die(self):
+        sh = Shell(die=True)
+        with self.assertRaises(CommandError):
+            sh.run('ls /maybe/this/exists/on/windows/or/something/idk')
+
