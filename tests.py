@@ -153,3 +153,13 @@ class ShellTestCase(unittest.TestCase):
             self.assertEqual(e.code, 1)
             self.assertEqual(e.stderr, no_die.errors()[0] + os.linesep)
 
+    def test_verbose(self):
+        sh = Shell(verbose=True)
+        with mock.patch('shell.sys.stdout') as mock_stdout:
+            sh.run('ls')
+            mock_stdout.write.assert_called_once_with(os.linesep.join(sh.output()) + os.linesep)
+        with mock.patch('shell.sys.stderr') as mock_stderr:
+            sh.run('ls /total/garbage/not/real/stuff')
+            mock_stderr.write.assert_called_once_with(os.linesep.join(sh.errors()) + os.linesep)
+
+

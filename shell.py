@@ -25,6 +25,7 @@ If you need to extend the behavior, you can also use the ``Shell`` object::
 """
 import shlex
 import subprocess
+import sys
 
 
 __author__ = 'Daniel Lindsley'
@@ -74,14 +75,19 @@ class Shell(object):
     Optionally accepts a ``die`` parameter, which should be a boolean.
     If set to ``True``, raises a CommandError if the command exits with a
     non-zero return code. (Default: ``False``)
+
+    Optionally accepts a ``verbose`` parameter, which should be a boolean.
+    If set to ``True``, prints stdout to stdout and stderr to stderr as
+    execution happens. (Default: ``False``)
     """
     def __init__(self, has_input=False, record_output=True, record_errors=True,
-                 strip_empty=True, die=False):
+                 strip_empty=True, die=False, verbose=False):
         self.has_input = has_input
         self.record_output = record_output
         self.record_errors = record_errors
         self.strip_empty = strip_empty
         self.die = die
+        self.verbose = verbose
 
         self.last_command = ''
         self.line_breaks = '\n'
@@ -114,13 +120,19 @@ class Shell(object):
 
         Records nothing if the ``record_*`` options have been set to ``False``.
         """
-        if self.record_output:
-            if stdout != None:
+        if stdout != None:
+            if self.record_output:
                 self._stdout += stdout
+            if self.verbose:
+                sys.stdout.write(stdout)
+                sys.stdout.flush()
 
-        if self.record_errors:
-            if stderr != None:
+        if stderr != None:
+            if self.record_errors:
                 self._stderr += stderr
+            if self.verbose:
+                sys.stderr.write(stderr)
+                sys.stderr.flush()
 
     def _communicate(self, the_input=None):
         """
@@ -292,7 +304,7 @@ class Shell(object):
 
 
 def shell(command, has_input=False, record_output=True, record_errors=True,
-          strip_empty=True, die=False):
+          strip_empty=True, die=False, verbose=False):
     """
     A convenient shortcut for running commands.
 
@@ -320,6 +332,10 @@ def shell(command, has_input=False, record_output=True, record_errors=True,
     If set to ``True``, raises a CommandError if the command exits with a
     non-zero return code. (Default: ``False``)
 
+    Optionally accepts a ``verbose`` parameter, which should be a boolean.
+    If set to ``True``, prints stdout to stdout and stderr to stderr as
+    execution happens. (Default: ``False``)
+
     Returns the ``Shell`` instance, which has been run with the given command.
 
     Example::
@@ -335,6 +351,7 @@ def shell(command, has_input=False, record_output=True, record_errors=True,
         record_output=record_output,
         record_errors=record_errors,
         strip_empty=strip_empty,
-        die=die
+        die=die,
+        verbose=verbose
     )
     return sh.run(command)
