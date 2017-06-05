@@ -150,7 +150,7 @@ If the command is interactive, you can send it input as well.::
 Failing Fast
 ------------
 
-You can have non-zero exit codes propigate as exceptions::
+You can have non-zero exit codes propagate as exceptions::
 
     >>> from shell import shell
     >>> shell('ls /not/a/real/place', die=True)

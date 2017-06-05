@@ -55,10 +55,6 @@ class Shell(object):
     """
     Handles executing commands & recording output.
 
-    Optionally accepts a ``die`` parameter, which should be a boolean.
-    If set to ``True``, raises a CommandError if the command exits with a
-    non-zero return code. (Default: ``False``)
-
     Optionally accepts a ``has_input`` parameter, which should be a boolean.
     If set to ``True``, the command will wait to execute until you call the
     ``Shell.write`` method & send input. (Default: ``False``)
@@ -74,14 +70,18 @@ class Shell(object):
     Optionally accepts a ``strip_empty`` parameter, which should be a boolean.
     If set to ``True``, only non-empty lines from ``Shell.output`` or
     ``Shell.errors`` will be returned. (Default: ``True``)
+
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
     """
-    def __init__(self, die=False, has_input=False, record_output=True,
-                 record_errors=True, strip_empty=True):
-        self.die = die
+    def __init__(self, has_input=False, record_output=True, record_errors=True,
+                 strip_empty=True, die=False):
         self.has_input = has_input
         self.record_output = record_output
         self.record_errors = record_errors
         self.strip_empty = strip_empty
+        self.die = die
 
         self.last_command = ''
         self.line_breaks = '\n'
@@ -291,18 +291,14 @@ class Shell(object):
         return lines
 
 
-def shell(command, die=False, has_input=False, record_output=True,
-          record_errors=True, strip_empty=True):
+def shell(command, has_input=False, record_output=True, record_errors=True,
+          strip_empty=True, die=False):
     """
     A convenient shortcut for running commands.
 
     Requires a ``command`` parameter should be either a string command
     (easier) or an array of arguments to send as the command (if you know
     what you're doing).
-
-    Optionally accepts a ``die`` parameter, which should be a boolean.
-    If set to ``True``, raises a CommandError if the command exits with a
-    non-zero return code. (Default: ``False``)
 
     Optionally accepts a ``has_input`` parameter, which should be a boolean.
     If set to ``True``, the command will wait to execute until you call the
@@ -320,6 +316,10 @@ def shell(command, die=False, has_input=False, record_output=True,
     If set to ``True``, only non-empty lines from ``Shell.output`` or
     ``Shell.errors`` will be returned. (Default: ``True``)
 
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
+
     Returns the ``Shell`` instance, which has been run with the given command.
 
     Example::
@@ -331,10 +331,10 @@ def shell(command, die=False, has_input=False, record_output=True,
 
     """
     sh = Shell(
-        die=die,
         has_input=has_input,
         record_output=record_output,
         record_errors=record_errors,
-        strip_empty=strip_empty
+        strip_empty=strip_empty,
+        die=die
     )
     return sh.run(command)
