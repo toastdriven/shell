@@ -44,7 +44,11 @@ class MissingCommandException(ShellException):
 
 class CommandError(ShellException):
     """Thrown when a command fails."""
-    error_code = 1
+    def __init__(self, message, code, stderr):
+        self.message = message
+        self.code = code
+        self.stderr = stderr
+        super(CommandError, self).__init__(message)
 
 
 class Shell(object):
@@ -66,13 +70,18 @@ class Shell(object):
     Optionally accepts a ``strip_empty`` parameter, which should be a boolean.
     If set to ``True``, only non-empty lines from ``Shell.output`` or
     ``Shell.errors`` will be returned. (Default: ``True``)
+
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
     """
     def __init__(self, has_input=False, record_output=True, record_errors=True,
-                 strip_empty=True):
+                 strip_empty=True, die=False):
         self.has_input = has_input
         self.record_output = record_output
         self.record_errors = record_errors
         self.strip_empty = strip_empty
+        self.die = die
 
         self.last_command = ''
         self.line_breaks = '\n'
@@ -125,6 +134,12 @@ class Shell(object):
 
         if self._popen.returncode is not None:
             self.code = self._popen.returncode
+
+        if self.die and self.code != 0:
+            raise CommandError(
+                message='Command exited with code {}'.format(self.code),
+                code=self.code,
+                stderr=stderr)
 
     def run(self, command):
         """
@@ -277,7 +292,7 @@ class Shell(object):
 
 
 def shell(command, has_input=False, record_output=True, record_errors=True,
-          strip_empty=True):
+          strip_empty=True, die=False):
     """
     A convenient shortcut for running commands.
 
@@ -301,6 +316,10 @@ def shell(command, has_input=False, record_output=True, record_errors=True,
     If set to ``True``, only non-empty lines from ``Shell.output`` or
     ``Shell.errors`` will be returned. (Default: ``True``)
 
+    Optionally accepts a ``die`` parameter, which should be a boolean.
+    If set to ``True``, raises a CommandError if the command exits with a
+    non-zero return code. (Default: ``False``)
+
     Returns the ``Shell`` instance, which has been run with the given command.
 
     Example::
@@ -315,6 +334,7 @@ def shell(command, has_input=False, record_output=True, record_errors=True,
         has_input=has_input,
         record_output=record_output,
         record_errors=record_errors,
-        strip_empty=strip_empty
+        strip_empty=strip_empty,
+        die=die
     )
     return sh.run(command)

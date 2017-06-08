@@ -147,6 +147,28 @@ If the command is interactive, you can send it input as well.::
     a good option.
 
 
+Failing Fast
+------------
+
+You can have non-zero exit codes propagate as exceptions::
+
+    >>> from shell import shell
+    >>> shell('ls /not/a/real/place', die=True)
+	Traceback (most recent call last):
+        ...
+	shell.CommandError: Command exited with code 1
+    >>> import sys
+    >>> from shell import CommandError
+    >>> try:
+    >>>     shell('ls /also/definitely/fake', die=True)
+    >>> except CommandError, e:
+    >>>     print e.stderr
+    >>>     sys.exit(e.code)
+    ls: /also/definitely/fake: No such file or directory
+    $ echo $?
+    1
+
+
 Chaining
 --------
 
